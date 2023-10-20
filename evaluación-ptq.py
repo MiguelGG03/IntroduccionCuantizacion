@@ -8,7 +8,7 @@ model = GPT2LMHeadModel.from_pretrained(model_name)
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 
 # Cuantización del modelo
-quantization_config = QuantizationConfig.from_float(model)
+quantization_config = QuantizationConfig.from_pretrained(model_name)  # Utiliza la configuración de cuantización preentrenada
 quantized_model = QuantizedGPT2LMHeadModel(quantization_config)
 quantized_model.load_state_dict(model.state_dict())
 
@@ -19,9 +19,6 @@ input_ids = tokenizer.encode(prompt, return_tensors="pt")
 # Es importante cambiar el modelo para que esté en modo evaluación
 quantized_model.eval()
 model.eval()
-
-# Cuantización del input
-input_ids = input_ids.to(dtype=torch.int8)
 
 # Realizar la generación de texto con ambos modelos
 output_original = model.generate(input_ids, max_length=50, num_return_sequences=1, no_repeat_ngram_size=2, top_k=50)
